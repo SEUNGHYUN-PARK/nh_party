@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:nh_party/SubPage/AllPartyListSubPage.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -12,7 +13,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin{
   DateTime timeBackPressed = DateTime.now();
 
-  List<Widget> _widgetList = [Text("home"), Text("2"), Text("3")];
+  List<Widget> _widgetList = [AllPartyListSubPage(),Text("2"),Text("3")];
   TabController? _tabController;
 
   @override
