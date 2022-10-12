@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nh_party/SubPage/AllPartyListSubPage.dart';
+import 'package:nh_party/SubPage/EtcSubPage.dart';
+import 'package:nh_party/SubPage/MyPartyListSubPage.dart';
+import 'DetailPage/DetailPageMain.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -13,7 +16,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin{
   DateTime timeBackPressed = DateTime.now();
 
-  List<Widget> _widgetList = [AllPartyListSubPage(),Text("2"),Text("3")];
+  List<Widget> _widgetList = [AllPartyListSubPage(),MyPartyListSubPage(),EtcSubPage()];
   TabController? _tabController;
 
   @override
@@ -57,6 +60,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                 icon: Icon(Icons.search),
                 onPressed: (){
                   print("search button is clicked");
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) =>DetailPageMain()));
                 })
           ],
         ),
