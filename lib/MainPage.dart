@@ -5,6 +5,7 @@ import 'package:nh_party/SubPage/AllPartyListSubPage.dart';
 import 'package:nh_party/SubPage/EtcSubPage.dart';
 import 'package:nh_party/SubPage/MyPartyListSubPage.dart';
 import 'DetailPage/DetailPageMain.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -15,15 +16,30 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin{
   DateTime timeBackPressed = DateTime.now();
-
   List<Widget> _widgetList = [AllPartyListSubPage(),MyPartyListSubPage(),EtcSubPage()];
   TabController? _tabController;
+  final _authentication = FirebaseAuth.instance;
+  User? loggedUser;
+
+  void getCurrentUser(){
+    try{
+      final user = _authentication.currentUser;
+      if(user!=null){
+        loggedUser = user;
+        print(loggedUser!.email);
+      }
+    }
+    catch(e) {
+      print(e);
+    }
+  }
 
   @override
   void initState()
   {
     super.initState();
     _tabController = TabController(length: _widgetList.length, vsync: this);
+    getCurrentUser();
   }
 
 

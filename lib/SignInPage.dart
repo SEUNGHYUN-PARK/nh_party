@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -16,11 +17,20 @@ class SignInPage extends StatefulWidget {
 class _SignInPageState extends State<SignInPage> {
   DateTime timeBackPressed = DateTime.now();
   final _formKey = GlobalKey<FormState>();
+  final _authentication = FirebaseAuth.instance;
   String _userID ="";
   String _userPW ="";
   bool _isAutoSignIn = false;
   bool _isSaveId = false;
   TextEditingController _textEditingController = TextEditingController();
+
+  void _tryValidation(){
+    final isValid = _formKey.currentState!.validate();
+    if(isValid){
+      _formKey.currentState!.save();
+    }
+  }
+
   @override
   void initState()
   {
@@ -40,11 +50,6 @@ class _SignInPageState extends State<SignInPage> {
     {
       _isSaveId = true;
     }
-  }
-
-  bool checkUserInfo()
-  {
-    return true;
   }
 
   void _setAutoSignIn()  async
@@ -88,15 +93,20 @@ class _SignInPageState extends State<SignInPage> {
                 child: Column(
                   children: <Widget>[
                     Container(
-                      width: 300,
+                      padding: EdgeInsets.only(top: 50),
                       child: Image.asset('image/logo.png',height: 150,width: 250,),
                     ),
+                    SizedBox(height: 20,),
                     Container(
                       width: 300,
-                      padding: EdgeInsets.only(left: 50,right: 50),
+                      padding: EdgeInsets.only(left: 20,right: 20),
                       child: TextFormField(
                         controller: _textEditingController,
-                        decoration: InputDecoration(labelText: 'ID'),
+                        decoration: InputDecoration(
+                          labelText: '이메일',
+                          labelStyle: TextStyle(fontSize: 10),
+                        ),
+                        keyboardType: TextInputType.emailAddress,
                         validator: (String? value) {
                           if(value==null||value.isEmpty)
                           {
@@ -109,14 +119,20 @@ class _SignInPageState extends State<SignInPage> {
                             _userID = value!;
                           });
                         },
+                        onChanged: (value){
+                          _userID = value;
+                        },
                       ),
                     ),
                     Container(
                       width: 300,
-                      padding: EdgeInsets.only(left: 50,right: 50),
+                      padding: EdgeInsets.only(left: 20,right: 20),
                       child: TextFormField(
                         obscureText: true,
-                        decoration: InputDecoration(labelText: "Password"),
+                        decoration: InputDecoration(
+                          labelText: "Password",
+                          labelStyle: TextStyle(fontSize: 10),
+                        ),
                         validator: (value) {
                           if(value == null || value.isEmpty)
                           {
@@ -129,17 +145,21 @@ class _SignInPageState extends State<SignInPage> {
                             _userPW = value!;
                           });
                         },
+                        onChanged: (value){
+                          _userPW = value;
+                        },
                       ),
                     ),
+                    SizedBox(
+                      height: 30,
+                    ),
                     TextButton(
-                        onPressed: (){
-                          if(_formKey.currentState!.validate()) //빈칸 체크
-                              {
-                            _formKey.currentState!.save();
-                            //계정정보 체크
-                            //if 성공 자동저장 및 아이디저장 기능 구현 + 메인 화면 이동
-                            //else 실패 toast message로 계정정보 불일치 항목 출력
-                            if(checkUserInfo()) {
+                        onPressed: () async {
+                          _tryValidation();
+                          try{
+                            final newUser = await _authentication.signInWithEmailAndPassword(
+                                email: _userID, password: _userPW);
+                            if(newUser.user!=null){
                               if (_isAutoSignIn)
                               {
                                 _setAutoSignIn();
@@ -148,58 +168,82 @@ class _SignInPageState extends State<SignInPage> {
                               {
                                 _setUserID(_userID);
                               }
+                              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()),(route)=>false);
                             }
-                            //                        final message = '계정정보를 다시 확인해주세요';
-                            //                         Fluttertoast.showToast(msg:message,fontSize:10);
-                            //
-                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()),(route)=>false);
-                            //Navigator.of(context).push(MaterialPageRoute(builder: (context) => MainPage()));
                           }
+                          catch(e){
+                            print(e);
+                            final message = '잘못된 계정정보를 입력하셨습니다.';
+                            Fluttertoast.showToast(msg:message,fontSize:10);
+                          }
+
+
+
+
+                          //계정정보 체크
+                          //if 성공 자동저장 및 아이디저장 기능 구현 + 메인 화면 이동
+                          //else 실패 toast message로 계정정보 불일치 항목 출력
+
+                          //                        final message = '계정정보를 다시 확인해주세요';
+                          //                         Fluttertoast.showToast(msg:message,fontSize:10);
+                          //
+
+                          //Navigator.of(context).push(MaterialPageRoute(builder: (context) => MainPage()));
                         },
                         child: Text("Login")
                     ),
+                    SizedBox(
+                      height: 15,
+                    ),
                     Container(
-                      width: 300,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Text("자동로그인"),
+                          Text(
+                            "자동로그인",
+                            style: TextStyle(fontSize: 15),
+                          ),
                           Checkbox(
                               value: _isAutoSignIn, onChanged: (value){
                             setState(() {
                               _isAutoSignIn = value!;
                             });
                           }),
-                          Text("ID저장"),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            "ID저장",
+                            style: TextStyle(fontSize: 15),
+                          ),
                           Checkbox(
-                              value: _isSaveId, onChanged: (value){
-                            setState(() {
-                              _isSaveId = value!;
-                            });
+                              value: _isSaveId,
+                              onChanged: (value){
+                                setState(() {
+                                  _isSaveId = value!;
+                                });
                           })
                         ],
                       ),
                     ),
                     Container(
                         padding: EdgeInsets.only(top: 10),
-                        width: 250,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             TextButton(onPressed: (){
                               Navigator.of(context).push(MaterialPageRoute(builder: (context) => SignUpPage()));
-                            }, child: Text("회원가입"))
+                            }, child: Text("아직 회원이 아니세요??",style: TextStyle(fontSize: 10),))
                           ],
                         )
                     ),
                     Container(
-                      width: 250,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           TextButton(onPressed: (){
                             Navigator.of(context).push(MaterialPageRoute(builder: (context) => InitPWPage()));
-                          }, child: Text("비밀번호 찾기")),
+                          }, child: Text("비밀번호가 기억나지않으세요?",style: TextStyle(fontSize: 10),)),
                         ],
                       ),
                     )
