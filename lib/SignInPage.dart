@@ -40,15 +40,21 @@ class _SignInPageState extends State<SignInPage> {
 
   void _getUserID() async
   {
+    var tmp="";
     var key = 'userID';
     SharedPreferences pref = await SharedPreferences.getInstance();
     setState(() {
-      _userID = pref.getString(key)!;
-      _textEditingController.text = _userID;
+      tmp = pref.getString(key)!;
+      _textEditingController.text = tmp;
     });
-    if(_userID != null || _userID != "")
+
+    if(tmp != "")
     {
       _isSaveId = true;
+    }
+    else
+    {
+      _isSaveId = false;
     }
   }
 
@@ -164,10 +170,15 @@ class _SignInPageState extends State<SignInPage> {
                               {
                                 _setAutoSignIn();
                               }
-                              if (_isSaveId)
+                              if(_isSaveId)
                               {
                                 _setUserID(_userID);
                               }
+                              else if(!_isSaveId)
+                              {
+                                _setUserID("");
+                              }
+
                               Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()),(route)=>false);
                             }
                           }
@@ -204,11 +215,13 @@ class _SignInPageState extends State<SignInPage> {
                             style: TextStyle(fontSize: 15),
                           ),
                           Checkbox(
-                              value: _isAutoSignIn, onChanged: (value){
-                            setState(() {
-                              _isAutoSignIn = value!;
-                            });
-                          }),
+                            value: _isAutoSignIn,
+                            onChanged: (value){
+                              setState(() {
+                                _isAutoSignIn = value!;
+                              });
+                            },
+                          ),
                           SizedBox(
                             width: 10,
                           ),
@@ -216,13 +229,15 @@ class _SignInPageState extends State<SignInPage> {
                             "ID저장",
                             style: TextStyle(fontSize: 15),
                           ),
+
                           Checkbox(
-                              value: _isSaveId,
-                              onChanged: (value){
+                              value: _isAutoSignIn ? true : _isSaveId,
+                              onChanged: _isAutoSignIn ? null : (value){
                                 setState(() {
                                   _isSaveId = value!;
                                 });
-                          })
+                              }
+                          )
                         ],
                       ),
                     ),
