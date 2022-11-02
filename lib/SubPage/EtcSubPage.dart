@@ -1,4 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../SignInPage.dart';
 
 class EtcSubPage extends StatefulWidget {
   const EtcSubPage({Key? key}) : super(key: key);
@@ -8,6 +12,7 @@ class EtcSubPage extends StatefulWidget {
 }
 
 class _EtcSubPageState extends State<EtcSubPage> {
+  final _authentication = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -17,7 +22,20 @@ class _EtcSubPageState extends State<EtcSubPage> {
             children: [
               Icon(Icons.person),
               Text("ㅇㅇㅇ님"),
-              ElevatedButton(onPressed: (){}, child: Text("수정"))
+              ElevatedButton(onPressed: () async {
+                _authentication.signOut();
+
+                var autoSignIn_key = 'autoSignIn';
+                var userID_key = 'userID';
+                var userPW_key = 'userPW';
+                SharedPreferences pref = await SharedPreferences.getInstance();
+                pref.remove(autoSignIn_key);
+                pref.remove(userID_key);
+                pref.remove(userPW_key);
+
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => SignInPage()));
+
+              }, child: Text("로그아웃"))
             ],
           ),
           Text("내가 찜한 목록"),
