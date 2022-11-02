@@ -58,11 +58,15 @@ class _SignInPageState extends State<SignInPage> {
     }
   }
 
-  void _setAutoSignIn()  async
+  void _setAutoSignIn(String _userID, String _userPW)  async
   {
     var autoSignIn_key = 'autoSignIn';
+    var userID_key = 'userID';
+    var userPW_key = 'userPW';
     SharedPreferences pref = await SharedPreferences.getInstance();
     pref.setString(autoSignIn_key, 'autoSignIn');
+    pref.setString(userID_key, _userID);
+    pref.setString(userPW_key, _userPW);
   }
 
   void _setUserID(String _userID)  async
@@ -168,7 +172,7 @@ class _SignInPageState extends State<SignInPage> {
                             if(newUser.user!=null){
                               if (_isAutoSignIn)
                               {
-                                _setAutoSignIn();
+                                _setAutoSignIn(_userID,_userPW);
                               }
                               if(_isSaveId)
                               {
