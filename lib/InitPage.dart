@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './SignInPage.dart';
 import './MainPage.dart';
@@ -12,6 +14,7 @@ class InitPage extends StatefulWidget {
 
 class _InitPageState extends State<InitPage> {
   //String userID = "";
+  final _authentication = FirebaseAuth.instance;
 
   void initState()
   {
@@ -21,15 +24,28 @@ class _InitPageState extends State<InitPage> {
 
   void _initCheck() async {
     var userID_key = 'userID';
+    var userPW_key = 'userPW';
     var autoSignIn_key = 'autoSignIn';
     SharedPreferences pref = await SharedPreferences.getInstance();
-    setState(() {
+    setState(() async {
       var userID_value = pref.getString(userID_key);
       var autoSignIn_value = pref.getString(autoSignIn_key);
+      var userPW_value = pref.getString(userPW_key);
       if(userID_value != null && autoSignIn_value == 'autoSignIn')
       {
         // ID저장
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()),(route)=>false);
+        try{
+          final user = await _authentication.signInWithEmailAndPassword(
+              email: userID_value, password: userPW_value!);
+          if(user.user!=null){
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()),(route)=>false);
+          }
+        }
+        catch(e){
+          print(e);
+          final message = e.toString();
+          Fluttertoast.showToast(msg:message,fontSize:10);
+        }
       }
       else
       {
