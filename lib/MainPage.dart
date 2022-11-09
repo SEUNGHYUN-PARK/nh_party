@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -19,6 +20,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   List<Widget> _widgetList = [AllPartyListSubPage(),MyPartyListSubPage(),EtcSubPage()];
   TabController? _tabController;
   final _authentication = FirebaseAuth.instance;
+  final partyRef = FirebaseFirestore.instance;
   User? loggedUser;
 
   void getCurrentUser(){
@@ -40,6 +42,14 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
     super.initState();
     _tabController = TabController(length: _widgetList.length, vsync: this);
     getCurrentUser();
+    searchAllDocuments();
+  }
+
+  void searchAllDocuments() {
+    partyRef.collection("partyName").get().then(
+          (res) => print("Successfully completed"),
+      onError: (e) => print("Error completing: $e"),
+    );
   }
 
 
@@ -62,18 +72,15 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text("소모임"),
+          title: Text("소모임",style: TextStyle(color: Colors.black),),
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
           automaticallyImplyLeading: false,
           centerTitle: true,
-          leading: IconButton(
-            icon: Icon(Icons.menu),
-            onPressed: (){
-              print("menu button is clicked");
-            },
-          ),
           actions: [
             IconButton(
                 icon: Icon(Icons.search),
+                color: Colors.black,
                 onPressed: (){
                   print("search button is clicked");
                   Navigator.of(context).push(MaterialPageRoute(builder: (context) =>DetailPageMain()));

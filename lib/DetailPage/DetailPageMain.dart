@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:nh_party/DetailPage/DetailPageOutline.dart';
 
+import '../MainPage.dart';
+
 class DetailPageMain extends StatefulWidget {
   const DetailPageMain({Key? key}) : super(key: key);
 
@@ -36,10 +38,23 @@ class _DetailPageMainState extends State<DetailPageMain> with SingleTickerProvid
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title : Text("상세페이지"),
+        title : Text("상세페이지",style: TextStyle(color: Colors.black),),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0.0,
         bottom: TabBar(
           tabs: _tabs,
           controller: _tabController,
+        ),
+        leading: IconButton(
+          onPressed: (){
+            Navigator.push(context,MaterialPageRoute(builder: (context){
+              return MainPage();
+            })
+            );
+          },
+          color: Colors.black,
+          icon: Icon(Icons.arrow_back_ios),
         ),
       ),
       body: TabBarView(

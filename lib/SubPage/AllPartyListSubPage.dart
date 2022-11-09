@@ -15,34 +15,26 @@ class _AllPartyListSubPageState extends State<AllPartyListSubPage> {
       body:  Container(
         child: Center(
           child: ListView.builder(
+              itemCount:10,
               itemBuilder: (context,position) {
-                return Card(
-                  child: Row(
-                    children: <Widget>[
-                      Icon(Icons.liquor,size: 50,color: Colors.red,),
-                      Padding(padding: EdgeInsets.only(right: 3)),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [Text("모임명"),Text("모임소개글")],
-                      ),
-                      Column(
-
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [Text("현인원/인원한도")],
-                      ),
-                      Column(
-
-                      )
-                    ],
-                  ),
+                return Column(
+                  children: [
+                    ListTile(
+                      title:Text("테니스 같이 치실분 모집합니다 (1/5)"),
+                      subtitle: Text("같이 테니스쳐요~~"),
+                      leading: Icon(Icons.account_box_sharp),
+                      onTap: (){
+                        print("눌러짐");
+                      },
+                    ),
+                    Container(
+                      height: 1,
+                      color: Colors.black,
+                    )
+                  ],
                 );
               },
-            itemCount: 3,
-              ) ,
+          ) ,
         ),
       ),
       floatingActionButton: FloatingActionButton(

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "803921182529",
+    "project_id": "nh-party",
+    "storage_bucket": "nh-party.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:803921182529:android:306f4388316830a38bebc0",
+        "android_client_info": {
+          "package_name": "com.example.nh_party"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "803921182529-i296oto48pgq57tjfp34uv9fd0rvn9r4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9M9B3iYT1k9SXcaCAWyikmTMR8IkqP_g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "803921182529-i296oto48pgq57tjfp34uv9fd0rvn9r4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

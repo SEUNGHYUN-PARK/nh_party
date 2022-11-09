@@ -76,6 +76,15 @@ class _SignInPageState extends State<SignInPage> {
     pref.setString(userID_key, _userID);
   }
 
+  void _removePreference() async
+  {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.remove('userID');
+    pref.remove('userPW');
+    pref.remove('autoSignIn');
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -172,6 +181,8 @@ class _SignInPageState extends State<SignInPage> {
                             if(newUser.user!=null){
                               if (_isAutoSignIn)
                               {
+                                print(_userID);
+                                print(_userPW);
                                 _setAutoSignIn(_userID,_userPW);
                               }
                               if(_isSaveId)
@@ -180,7 +191,7 @@ class _SignInPageState extends State<SignInPage> {
                               }
                               else if(!_isSaveId)
                               {
-                                _setUserID("");
+                                _removePreference();
                               }
 
                               Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()),(route)=>false);
@@ -188,7 +199,7 @@ class _SignInPageState extends State<SignInPage> {
                           }
                           catch(e){
                             print(e);
-                            final message = '잘못된 계정정보를 입력하셨습니다.';
+                            final message = e.toString();
                             Fluttertoast.showToast(msg:message,fontSize:10);
                           }
 

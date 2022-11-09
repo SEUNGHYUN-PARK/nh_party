@@ -31,6 +31,8 @@ class _InitPageState extends State<InitPage> {
       var userID_value = pref.getString(userID_key);
       var autoSignIn_value = pref.getString(autoSignIn_key);
       var userPW_value = pref.getString(userPW_key);
+      print(userID_value);
+      print(userPW_value);
       if(userID_value != null && autoSignIn_value == 'autoSignIn')
       {
         // ID저장
