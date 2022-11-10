@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nh_party/DetailPage/DetailPageMain.dart';
+import 'package:intl/intl.dart';
 
 class MakePartySubPage extends StatefulWidget {
   const MakePartySubPage({Key? key}) : super(key: key);
@@ -205,18 +206,21 @@ class _MakePartySubPageState extends State<MakePartySubPage> {
                             'partyName' : _partyName,
                             'partySubtitle' : _partySubtitle,
                             'partyContents' : _partyContents,
-                            'partyCategory' : _partyCategory,
+                            'partyCategory' : _selectedValue,
+                            'currentMemberCnt': "1",
                             'maxMemberCnt' : _maxMemberCnt,
-                            'currentMemberCnt': 1,
-                            'partyMaker' : _authentication.currentUser!.uid
+                            'partyMaker' : _authentication.currentUser!.uid,
+                            'partyId' : partyRef.id,
+                            'timeStamp' : DateFormat('yyyyMMddHHmmss').format(DateTime.now()),
                           });
 
                           final partyChatroom = FirebaseFirestore.instance.collection('partyChatroom').doc(partyRef.id);
                           //채팅방 만들어주는 로직 추가
-                          await partyChatroom.set({
+
+                          /* await partyChatroom.set({
                             'speaker' : "홍길동",
                             'contents' : "마이크테스트"
-                          });
+                          });*/
 
                           if(partyRef != null){
                             Navigator.push(context,MaterialPageRoute(builder: (context){

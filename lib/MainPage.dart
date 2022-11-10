@@ -42,15 +42,9 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
     super.initState();
     _tabController = TabController(length: _widgetList.length, vsync: this);
     getCurrentUser();
-    searchAllDocuments();
+
   }
 
-  void searchAllDocuments() {
-    partyRef.collection("partyName").get().then(
-          (res) => print("Successfully completed"),
-      onError: (e) => print("Error completing: $e"),
-    );
-  }
 
 
   @override
