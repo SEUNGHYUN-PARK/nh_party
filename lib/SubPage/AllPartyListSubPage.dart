@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:nh_party/SubPage/MakePartySubPage.dart';
+import '../DetailPage/DetailPageMain.dart';
 import '../Model/party.dart';
 
 class AllPartyListSubPage extends StatefulWidget {
@@ -15,7 +16,7 @@ class _AllPartyListSubPageState extends State<AllPartyListSubPage> {
 
   Future<bool> getAllData() async{
     CollectionReference<Map<String,dynamic>> res = FirebaseFirestore.instance.collection("partyName");
-    QuerySnapshot<Map<String,dynamic>> qrysnp = await res.get(); //orderBy("timeStamp",descending: true)
+    QuerySnapshot<Map<String,dynamic>> qrysnp = await res.orderBy("timeStamp",descending: true).get(); //
 
     mdl = [];
     for (var doc in qrysnp.docs)
@@ -62,7 +63,11 @@ class _AllPartyListSubPageState extends State<AllPartyListSubPage> {
                             subtitle: Text("${mdl[position].partySubtitle}"),
                             leading: Icon(Icons.account_box_sharp),
                             onTap: (){
-                              print("눌러짐");
+                              print("${mdl[position].partyName}");
+                              Navigator.push(context,MaterialPageRoute(builder: (context){
+                                return DetailPageMain("${mdl[position].partyId}");
+                              })
+                              );
                             },
                           ),
                           Container(

@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:nh_party/DetailPage/DetailPageChat.dart';
 import 'package:nh_party/DetailPage/DetailPageOutline.dart';
 
 import '../MainPage.dart';
 
 class DetailPageMain extends StatefulWidget {
-  const DetailPageMain({Key? key}) : super(key: key);
+  String partyId='';
+  DetailPageMain(this.partyId,{Key? key}) : super(key: key);
 
   @override
-  State<DetailPageMain> createState() => _DetailPageMainState();
+  State<DetailPageMain> createState() => _DetailPageMainState(partyId);
 }
 
 class _DetailPageMainState extends State<DetailPageMain> with SingleTickerProviderStateMixin {
@@ -17,6 +19,7 @@ class _DetailPageMainState extends State<DetailPageMain> with SingleTickerProvid
                         Tab(text: "멤버",),
                         Tab(text: "채팅")];
   TabController? _tabController;
+  String partyId  = '';
 
   @override
   void initState()
@@ -32,6 +35,10 @@ class _DetailPageMainState extends State<DetailPageMain> with SingleTickerProvid
     super.dispose();
   }
 
+  _DetailPageMainState(String partyId)
+  {
+    this.partyId = partyId;
+  }
 
 
   @override
@@ -42,10 +49,6 @@ class _DetailPageMainState extends State<DetailPageMain> with SingleTickerProvid
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0.0,
-        bottom: TabBar(
-          tabs: _tabs,
-          controller: _tabController,
-        ),
         leading: IconButton(
           onPressed: (){
             Navigator.push(context,MaterialPageRoute(builder: (context){
@@ -58,8 +61,13 @@ class _DetailPageMainState extends State<DetailPageMain> with SingleTickerProvid
         ),
       ),
       body: TabBarView(
-        children: <Widget>[DetailPageOutline(),Text("게시판"),Text("멤버"),Text("채팅")],
+        children: <Widget>[DetailPageOutline(partyId),Text("게시판"),Text("멤버"),DetailPageChat(partyId)],
         controller: _tabController,
+      ),
+      bottomNavigationBar: TabBar(
+        tabs: _tabs,
+        controller: _tabController,
+        labelColor: Colors.black,
       ),
     );
   }

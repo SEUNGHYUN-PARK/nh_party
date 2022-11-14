@@ -15,12 +15,12 @@ class MakePartySubPage extends StatefulWidget {
 class _MakePartySubPageState extends State<MakePartySubPage> {
   final _formkey = GlobalKey<FormState>();
   final _authentication = FirebaseAuth.instance;
+  final List<String> _valueList = ['운동','먹킷리스트','여행','게임','번개'];
   String _partyName = "";
   String _partyContents = "";
   String _partyCategory = "";
   String _maxMemberCnt = "";
   String _partySubtitle = "";
-  final List<String> _valueList = ['운동','먹킷리스트','여행','게임','번개'];
   String _selectedValue = "운동";
 
   void _tryValidation(){
@@ -224,7 +224,7 @@ class _MakePartySubPageState extends State<MakePartySubPage> {
 
                           if(partyRef != null){
                             Navigator.push(context,MaterialPageRoute(builder: (context){
-                              return DetailPageMain();
+                              return DetailPageMain(partyRef.id);
                             })
                             );
                           }

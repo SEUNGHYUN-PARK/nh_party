@@ -77,7 +77,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                 color: Colors.black,
                 onPressed: (){
                   print("search button is clicked");
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) =>DetailPageMain()));
+                  //Navigator.of(context).push(MaterialPageRoute(builder: (context) =>DetailPageMain()));
                 })
           ],
         ),
