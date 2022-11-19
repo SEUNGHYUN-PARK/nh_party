@@ -4,14 +4,20 @@ import 'package:nh_party/chat/chat_bubble.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class Messages extends StatelessWidget {
-  const Messages({Key? key}) : super(key: key);
+  String? partyId='';
+
+  Messages(String? partyId)
+  {
+    this.partyId = partyId;
+  }
 
   @override
   Widget build(BuildContext context) {
+    print(partyId);
     final user = FirebaseAuth.instance.currentUser;
     return StreamBuilder(
       stream: FirebaseFirestore.instance
-          .collection('testchat/XVxXEL1ZAxZot42ohqmH/test')
+          .collection('somoim/${partyId}/chat')
           .orderBy('time',descending: true)
           .snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {

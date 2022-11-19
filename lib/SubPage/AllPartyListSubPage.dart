@@ -15,7 +15,7 @@ class _AllPartyListSubPageState extends State<AllPartyListSubPage> {
   List<Party> mdl = [];
 
   Future<bool> getAllData() async{
-    CollectionReference<Map<String,dynamic>> res = FirebaseFirestore.instance.collection("partyName");
+    CollectionReference<Map<String,dynamic>> res = FirebaseFirestore.instance.collection("somoim");
     QuerySnapshot<Map<String,dynamic>> qrysnp = await res.orderBy("timeStamp",descending: true).get(); //
 
     mdl = [];

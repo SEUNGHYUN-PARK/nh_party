@@ -3,6 +3,7 @@ import 'package:nh_party/DetailPage/DetailPageChat.dart';
 import 'package:nh_party/DetailPage/DetailPageOutline.dart';
 
 import '../MainPage.dart';
+import 'DetailPageBoard.dart';
 
 class DetailPageMain extends StatefulWidget {
   String partyId='';
@@ -58,16 +59,17 @@ class _DetailPageMainState extends State<DetailPageMain> with SingleTickerProvid
           },
           color: Colors.black,
           icon: Icon(Icons.arrow_back_ios),
+
+        ),
+        bottom: TabBar(
+          tabs: _tabs,
+          controller: _tabController,
+          labelColor: Colors.black,
         ),
       ),
       body: TabBarView(
-        children: <Widget>[DetailPageOutline(partyId),Text("게시판"),Text("멤버"),DetailPageChat(partyId)],
+        children: <Widget>[DetailPageOutline(partyId),DetailPageBoard(partyId),Text("멤버"),DetailPageChat(partyId)],
         controller: _tabController,
-      ),
-      bottomNavigationBar: TabBar(
-        tabs: _tabs,
-        controller: _tabController,
-        labelColor: Colors.black,
       ),
     );
   }

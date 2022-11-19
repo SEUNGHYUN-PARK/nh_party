@@ -200,7 +200,7 @@ class _MakePartySubPageState extends State<MakePartySubPage> {
                       onPressed: () async {
                         _tryValidation();
                         try{
-                          final partyRef = FirebaseFirestore.instance.collection('partyName').doc();
+                          final partyRef = FirebaseFirestore.instance.collection('somoim').doc().collection('basicInfo').doc();
                           await partyRef
                               .set({
                             'partyName' : _partyName,
@@ -216,11 +216,6 @@ class _MakePartySubPageState extends State<MakePartySubPage> {
 
                           final partyChatroom = FirebaseFirestore.instance.collection('partyChatroom').doc(partyRef.id);
                           //채팅방 만들어주는 로직 추가
-
-                          /* await partyChatroom.set({
-                            'speaker' : "홍길동",
-                            'contents' : "마이크테스트"
-                          });*/
 
                           if(partyRef != null){
                             Navigator.push(context,MaterialPageRoute(builder: (context){

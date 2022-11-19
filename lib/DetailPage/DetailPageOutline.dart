@@ -34,7 +34,7 @@ class _DetailPageOutlineState extends State<DetailPageOutline> {
   }
 
   Future<bool> getPartyInfo() async{
-    final docs = await FirebaseFirestore.instance.collection("partyName").doc(partyId).get()
+    final docs = await FirebaseFirestore.instance.collection("somoim").doc(partyId).get()
                  .then((DocumentSnapshot doc){
                    currentMemberCnt = doc["currentMemberCnt"];
                    maxMemberCnt = doc["maxMemberCnt"];

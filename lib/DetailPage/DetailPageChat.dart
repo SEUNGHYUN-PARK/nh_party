@@ -25,9 +25,9 @@ class _DetailPageChatState extends State<DetailPageChat> {
       child: Column(
         children: [
           Expanded(
-            child: Messages()
+            child: Messages(partyId)
           ),
-          NewMessage(),
+          NewMessage(partyId),
         ]
       ),
     );

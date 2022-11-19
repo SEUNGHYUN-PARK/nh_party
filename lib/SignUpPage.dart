@@ -423,14 +423,13 @@ class _SignUpPageState extends State<SignUpPage> {
                             final newUser = await _authentication.createUserWithEmailAndPassword(
                                 email: _userEmail, password: _userPassword);
 
-                            await FirebaseFirestore.instance.collection('user').doc(newUser.user!.uid)
-                            .set({
+                            await FirebaseFirestore.instance.collection('user').doc(newUser.user!.uid).collection("myInfo")
+                            .add({
                               'userName' : _userName,
                               'email' : _userEmail,
                               'firstFav' : _first_fav,
                               'secondFav' : _second_fav,
                               'thirdFav' : _third_fav
-
                             });
 
                             if(newUser.user != null){
@@ -443,8 +442,11 @@ class _SignUpPageState extends State<SignUpPage> {
                             }
                           }
                           catch(e){
-                            final message = '이미 등록된 계정이 있습니다.';
+                            final message = e.toString();
                             Fluttertoast.showToast(msg:message,fontSize:10);
+                            setState(() {
+                              showSpinner=false;
+                            });
                           }
                         },
                         child: Text("가입하기",style: TextStyle(color: Colors.white),),

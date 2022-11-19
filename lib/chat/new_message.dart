@@ -3,26 +3,33 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class NewMessage extends StatefulWidget {
-  const NewMessage({Key? key}) : super(key: key);
+  String? partyId = '';
+  NewMessage(this.partyId,{Key? key}) : super(key: key);
 
   @override
-  State<NewMessage> createState() => _NewMessageState();
+  State<NewMessage> createState() => _NewMessageState(partyId);
 }
 
 class _NewMessageState extends State<NewMessage> {
 
+  String? partyId = '';
   final _controller = TextEditingController();
   var _userEnterMessage = '';
-//nBo4wyKoYyU2SMv5UNm28AYcv7B3
+
+  _NewMessageState(String? partyId)
+  {
+    this.partyId = partyId;
+  }
+
   void _sendMessage() async {
     FocusScope.of(context).unfocus();
     final user = FirebaseAuth.instance.currentUser;
     final userData = await FirebaseFirestore.instance.collection('user')
         .doc(user!.uid).get();
-    FirebaseFirestore.instance.collection('testchat/XVxXEL1ZAxZot42ohqmH/test').add({
+    FirebaseFirestore.instance.collection('somoim/${partyId}/chat').add({
       'text' : _userEnterMessage,
       'time' : Timestamp.now(),
-      'userID' : user!.uid,
+      'userID' : user.uid,
       'userName' : userData.data()!['userName']
     });
     _controller.clear();
