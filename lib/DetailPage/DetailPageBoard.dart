@@ -2,8 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../Model/board.dart';
-import 'DetailPageBoardNew.dart';
-import 'DetailPageBoardSub.dart';
+
+import 'board/DetailPageBoardNew.dart';
+import 'board/DetailPageBoardSub.dart';
 
 
 class DetailPageBoard extends StatefulWidget {

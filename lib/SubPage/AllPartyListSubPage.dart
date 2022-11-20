@@ -16,8 +16,8 @@ class _AllPartyListSubPageState extends State<AllPartyListSubPage> {
 
   Future<bool> getAllData() async{
     CollectionReference<Map<String,dynamic>> res = FirebaseFirestore.instance.collection("somoim");
-    QuerySnapshot<Map<String,dynamic>> qrysnp = await res.orderBy("timeStamp",descending: true).get(); //
-
+    QuerySnapshot<Map<String,dynamic>> qrysnp = await res.get(); //
+    //.orderBy("timeStamp",descending: true)
     mdl = [];
     for (var doc in qrysnp.docs)
     {

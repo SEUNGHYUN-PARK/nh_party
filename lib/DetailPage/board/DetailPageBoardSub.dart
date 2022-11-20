@@ -21,15 +21,17 @@ class _DetailPageBoardSubState extends State<DetailPageBoardSub> {
   _DetailPageBoardSubState(String partyId, String postId){
     this._partyId = partyId;
     this._postId = postId;
+    print(_partyId);
+    print(_postId);
   }
 
   Future<bool> getPostInfo() async{
-    final docs = await FirebaseFirestore.instance.collection("somoim/${_partyId}/board/${_partyId}/post").doc().get()
+    final docs = await FirebaseFirestore.instance.collection("somoim/${_partyId}/board/${_partyId}/post").doc(_postId).get()
         .then((DocumentSnapshot doc){
       _postId = doc["postId"];
       _title = doc["title"];
       _contents = doc["contents"];
-    }
+      }
     );
     return true;
   }

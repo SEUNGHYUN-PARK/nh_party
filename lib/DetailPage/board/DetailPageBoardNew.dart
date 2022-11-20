@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 
-import 'DetailPageMain.dart';
+import '../DetailPageMain.dart';
 
 
 class DetailPageBoardNew extends StatefulWidget {

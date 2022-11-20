@@ -15,7 +15,7 @@ class MakePartySubPage extends StatefulWidget {
 class _MakePartySubPageState extends State<MakePartySubPage> {
   final _formkey = GlobalKey<FormState>();
   final _authentication = FirebaseAuth.instance;
-  final List<String> _valueList = ['운동','먹킷리스트','여행','게임','번개'];
+  final List<String> _valueList = ['운동','먹방','게임','여행'];
   String _partyName = "";
   String _partyContents = "";
   String _partyCategory = "";
@@ -200,7 +200,8 @@ class _MakePartySubPageState extends State<MakePartySubPage> {
                       onPressed: () async {
                         _tryValidation();
                         try{
-                          final partyRef = FirebaseFirestore.instance.collection('somoim').doc().collection('basicInfo').doc();
+                          var timeStamp = DateFormat('yyyyMMddHHmmss').format(DateTime.now());
+                          final partyRef = FirebaseFirestore.instance.collection('somoim').doc();
                           await partyRef
                               .set({
                             'partyName' : _partyName,
@@ -211,11 +212,37 @@ class _MakePartySubPageState extends State<MakePartySubPage> {
                             'maxMemberCnt' : _maxMemberCnt,
                             'partyMaker' : _authentication.currentUser!.uid,
                             'partyId' : partyRef.id,
-                            'timeStamp' : DateFormat('yyyyMMddHHmmss').format(DateTime.now()),
+                            'timeStamp' : timeStamp,
                           });
 
-                          final partyChatroom = FirebaseFirestore.instance.collection('partyChatroom').doc(partyRef.id);
-                          //채팅방 만들어주는 로직 추가
+                          var tmp = '';
+                          if(_selectedValue == "운동"){
+                            tmp = 'exercise';
+                          }
+                          else if(_selectedValue == "먹방"){
+                            tmp = 'mukbang';
+                          }
+                          else if(_selectedValue == "게임"){
+                            tmp = 'game';
+                          }
+                          else if (_selectedValue == "여행"){
+                            tmp = 'trip';
+                          }
+
+
+                          final categoryRef = FirebaseFirestore.instance.collection('category').doc('category').collection('${tmp}').doc(partyRef.id);
+                          await categoryRef
+                              .set({
+                            'partyName' : _partyName,
+                            'partySubtitle' : _partySubtitle,
+                            'partyContents' : _partyContents,
+                            'partyCategory' : _selectedValue,
+                            'currentMemberCnt': "1",
+                            'maxMemberCnt' : _maxMemberCnt,
+                            'partyMaker' : _authentication.currentUser!.uid,
+                            'partyId' : partyRef.id,
+                            'timeStamp' : timeStamp,
+                          });
 
                           if(partyRef != null){
                             Navigator.push(context,MaterialPageRoute(builder: (context){

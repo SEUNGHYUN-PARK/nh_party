@@ -25,7 +25,7 @@ class _NewMessageState extends State<NewMessage> {
     FocusScope.of(context).unfocus();
     final user = FirebaseAuth.instance.currentUser;
     final userData = await FirebaseFirestore.instance.collection('user')
-        .doc(user!.uid).get();
+        .doc(user!.uid).collection('myInfo').doc(user.uid).get();
     FirebaseFirestore.instance.collection('somoim/${partyId}/chat').add({
       'text' : _userEnterMessage,
       'time' : Timestamp.now(),

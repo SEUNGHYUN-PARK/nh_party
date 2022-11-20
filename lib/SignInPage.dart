@@ -210,6 +210,9 @@ class _SignInPageState extends State<SignInPage> {
                               }
                             }
                             catch(e){
+                              setState(() {
+                                showSpinner = false;
+                              });
                               print(e);
                               final message = e.toString();
                               Fluttertoast.showToast(msg:message,fontSize:10);

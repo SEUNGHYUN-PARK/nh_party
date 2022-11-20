@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:nh_party/chat/message.dart';
-import 'package:nh_party/chat/new_message.dart';
+
+import 'chat/message.dart';
+import 'chat/new_message.dart';
+
 
 class DetailPageChat extends StatefulWidget {
   String partyId = '';

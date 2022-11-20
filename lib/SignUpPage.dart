@@ -17,13 +17,16 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   final _formkey = GlobalKey<FormState>();
   final _authentication = FirebaseAuth.instance;
+  final List<String> _valueList_first = ['운동','먹방','게임','여행'];
+  final List<String> _valueList_second = ['먹방','게임','여행'];
+  final List<String> _valueList_third = ['게임','여행'];
   bool showSpinner = false;
   String _userEmail = '';
   String _userPassword = '';
   String _userName = '';
-  String _first_fav = '';
-  String _second_fav = '';
-  String _third_fav = '';
+  String _first_fav = '운동';
+  String _second_fav = '먹방';
+  String _third_fav = '게임';
 
   void _tryValidation(){
    final isValid = _formkey.currentState!.validate();
@@ -265,48 +268,38 @@ class _SignUpPageState extends State<SignUpPage> {
                           )
                       ),
                     )
-                ), // 이름 텍스트박스
+                ), // 이름 텍스트박스사1
                 SizedBox(
                     child: Padding(
-                        padding: EdgeInsets.only(top: 10,left: 30,right:30,bottom: 5),
-                        child: Row(
-                          children: [
-                            Text(
-                                "관심분야1"
-                            ),
-                          ],
-                        )
-                    )
-                ), // 관심사1
-                SizedBox(
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 5,left: 30,right:30,bottom: 3),
+                      padding: EdgeInsets.only(top: 20,left: 30,right:30,bottom: 3),
                       child: Expanded(
-                          child: TextFormField(
-                            onSaved: (value){
-                              _first_fav = value!;
-                            },
-                            onChanged: (value){
-                              _first_fav = value;
-                            },
-                            key:  ValueKey(5),
-                            style: TextStyle(),
+                          child: InputDecorator(
+                            key: ValueKey(5),
                             decoration: InputDecoration(
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color:Palette.textColor1
+                                contentPadding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color:Palette.textColor1
+                                  )
                                 ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color:Colors.greenAccent
-                                ),
-                              ),
-                              contentPadding: EdgeInsets.all(10.0),
-                              hintText: '관심 분야를 입력해주세요',
-                              hintStyle: TextStyle(
-                                  fontSize: 14,
-                                  color: Palette.textColor1
+                                labelText: "관심 분야1"
+                            ),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton(
+                                isExpanded: true,
+                                value: _first_fav,
+                                items: _valueList_first.map((value){
+                                  return DropdownMenuItem(
+                                    child: Text(value),
+                                    value: value,
+                                  );
+                                }).toList(),
+                                onChanged: (value){
+                                  setState(() {
+                                    _first_fav = value!;
+                                  });
+                                },
+                                hint: Text("선택하세요"),
                               ),
                             ),
                           )
@@ -315,92 +308,72 @@ class _SignUpPageState extends State<SignUpPage> {
                 ), // 관심사1 텍스트박스
                 SizedBox(
                     child: Padding(
-                        padding: EdgeInsets.only(top: 10,left: 30,right:30,bottom: 5),
-                        child: Row(
-                          children: [
-                            Text(
-                                "관심분야2"
-                            ),
-                          ],
-                        )
-                    )
-                ), // 관심사2
-                SizedBox(
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 5,left: 30,right:30,bottom: 3),
+                      padding: EdgeInsets.only(top: 15,left: 30,right:30,bottom: 3),
                       child: Expanded(
-                          child: TextFormField(
-                            onSaved: (value){
-                              _second_fav = value!;
-                            },
-                            onChanged: (value){
-                              _second_fav = value;
-                            },
-                            key:  ValueKey(6),
-                            style: TextStyle(),
+                          child: InputDecorator(
+                            key: ValueKey(6),
                             decoration: InputDecoration(
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color:Palette.textColor1
+                                contentPadding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+                                enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color:Palette.textColor1
+                                    )
                                 ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color:Colors.greenAccent
-                                ),
-                              ),
-                              contentPadding: EdgeInsets.all(10.0),
-                              hintText: '관심 분야를 입력해주세요',
-                              hintStyle: TextStyle(
-                                  fontSize: 14,
-                                  color: Palette.textColor1
+                                labelText: "관심 분야2"
+                            ),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton(
+                                isExpanded: true,
+                                value: _second_fav,
+                                items: _valueList_second.map((value){
+                                  return DropdownMenuItem(
+                                    child: Text(value),
+                                    value: value,
+                                  );
+                                }).toList(),
+                                onChanged: (value){
+                                  setState(() {
+                                    _second_fav = value!;
+                                  });
+                                },
+                                hint: Text("선택하세요"),
                               ),
                             ),
                           )
                       ),
                     )
-                ), // 관심사2 텍스트박스
+                ), // 관심사2 텍스트박스3
                 SizedBox(
                     child: Padding(
-                        padding: EdgeInsets.only(top: 10,left: 30,right:30,bottom: 5),
-                        child: Row(
-                          children: [
-                            Text(
-                                "관심분야3"
-                            ),
-                          ],
-                        )
-                    )
-                ), // 관심사3
-                SizedBox(
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 5,left: 30,right:30,bottom: 3),
+                      padding: EdgeInsets.only(top: 15,left: 30,right:30,bottom: 3),
                       child: Expanded(
-                          child: TextFormField(
-                            onSaved: (value){
-                              _third_fav = value!;
-                            },
-                            onChanged: (value){
-                              _third_fav = value;
-                            },
-                            key:  ValueKey(7),
-                            style: TextStyle(),
+                          child: InputDecorator(
+                            key: ValueKey(7),
                             decoration: InputDecoration(
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color:Palette.textColor1
+                                contentPadding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+                                enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color:Palette.textColor1
+                                    )
                                 ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color:Colors.greenAccent
-                                ),
-                              ),
-                              contentPadding: EdgeInsets.all(10.0),
-                              hintText: '관심 분야를 입력해주세요',
-                              hintStyle: TextStyle(
-                                  fontSize: 14,
-                                  color: Palette.textColor1
+                                labelText: "관심 분야3"
+                            ),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton(
+                                isExpanded: true,
+                                value: _third_fav,
+                                items: _valueList_third.map((value){
+                                  return DropdownMenuItem(
+                                    child: Text(value),
+                                    value: value,
+                                  );
+                                }).toList(),
+                                onChanged: (value){
+                                  setState(() {
+                                    _third_fav = value!;
+                                  });
+                                },
+                                hint: Text("선택하세요"),
                               ),
                             ),
                           )
@@ -423,8 +396,8 @@ class _SignUpPageState extends State<SignUpPage> {
                             final newUser = await _authentication.createUserWithEmailAndPassword(
                                 email: _userEmail, password: _userPassword);
 
-                            await FirebaseFirestore.instance.collection('user').doc(newUser.user!.uid).collection("myInfo")
-                            .add({
+                            await FirebaseFirestore.instance.collection('user').doc(newUser.user!.uid).collection("myInfo").doc(newUser.user!.uid)
+                            .set({
                               'userName' : _userName,
                               'email' : _userEmail,
                               'firstFav' : _first_fav,

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:nh_party/chat/chat_bubble.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+import 'chat_bubble.dart';
 
 class Messages extends StatelessWidget {
   String? partyId='';
