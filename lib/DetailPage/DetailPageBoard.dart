@@ -44,9 +44,7 @@ class _DetailPageBoardState extends State<DetailPageBoard> {
 
   @override
   Widget build(BuildContext context) {
-
-
-
+    setState(() {});
     return Scaffold(
       body: FutureBuilder(
         future: getAllData(),

@@ -17,6 +17,10 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   final _formkey = GlobalKey<FormState>();
   final _authentication = FirebaseAuth.instance;
+
+  TextEditingController _password = TextEditingController();
+  TextEditingController _confirmPassword = TextEditingController();
+
   final List<String> _valueList_first = ['운동','먹방','게임','여행'];
   final List<String> _valueList_second = ['먹방','게임','여행'];
   final List<String> _valueList_third = ['게임','여행'];
@@ -27,6 +31,8 @@ class _SignUpPageState extends State<SignUpPage> {
   String _first_fav = '운동';
   String _second_fav = '먹방';
   String _third_fav = '게임';
+
+
 
   void _tryValidation(){
    final isValid = _formkey.currentState!.validate();
@@ -137,10 +143,11 @@ class _SignUpPageState extends State<SignUpPage> {
                       padding: EdgeInsets.only(top: 5,left: 30,right:30,bottom: 8),
                       child: Expanded(
                           child: TextFormField(
+                            controller: _password,
                             obscureText: true,
                             validator: (value){
                               if(value!.isEmpty || value.length < 6) {
-                                return '비밀번호를 확인해주세요';
+                                return '비밀번호가 공란이거나 짧습니다 다시 입력해주세요';
                               }
                               return null;
                             },
@@ -179,15 +186,16 @@ class _SignUpPageState extends State<SignUpPage> {
                       padding: EdgeInsets.only(top: 2,left: 30,right:30,bottom: 8),
                       child: Expanded(
                           child: TextFormField(
+                            controller: _confirmPassword,
                             obscureText: true,
                             validator: (value){
-                              if(value!.isEmpty || value.length < 6) {
+                              if(value!.isEmpty) {
                                 return '비밀번호를 확인해주세요';
                               }
+                              if(_password.text!=_confirmPassword.text){
+                                return '패스워드가 불일치합니다';
+                              }
                               return null;
-                            },
-                            onChanged: (value){
-                              //윗 텍스트박스랑 동일하지않다면 에레메세지 출력
                             },
                             key:  ValueKey(3),
                             style: TextStyle(),

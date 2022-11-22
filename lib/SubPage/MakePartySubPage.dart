@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nh_party/DetailPage/DetailPageMain.dart';
 import 'package:intl/intl.dart';
@@ -145,6 +147,8 @@ class _MakePartySubPageState extends State<MakePartySubPage> {
                     ),
                     child: TextFormField(
                       key : ValueKey(4),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.allow(RegExp('[0-9]'))],
                       decoration: InputDecoration(border: InputBorder.none),
                       validator: (String? value){
                         if(value==null||value.isEmpty)

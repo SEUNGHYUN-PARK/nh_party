@@ -38,6 +38,20 @@ class _DetailPageBoardNewState extends State<DetailPageBoardNew> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+          title : Text("게시글 추가",style: TextStyle(color: Colors.black),),
+          centerTitle: true,
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
+          leading: IconButton(
+            onPressed: (){
+              Navigator.pop(context);
+            },
+            color: Colors.black,
+            icon: Icon(Icons.arrow_back_ios),
+
+          ),
+        ),
       body: Padding(
         padding: EdgeInsets.only(top: 30,left: 30,right: 30),
         child: SingleChildScrollView(
