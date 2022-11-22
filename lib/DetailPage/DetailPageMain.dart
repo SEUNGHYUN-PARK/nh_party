@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nh_party/DetailPage/DetailPageChat.dart';
+import 'package:nh_party/DetailPage/DetailPageMember.dart';
 import 'package:nh_party/DetailPage/DetailPageOutline.dart';
 
 import '../MainPage.dart';
@@ -68,7 +69,7 @@ class _DetailPageMainState extends State<DetailPageMain> with SingleTickerProvid
         ),
       ),
       body: TabBarView(
-        children: <Widget>[DetailPageOutline(partyId),DetailPageBoard(partyId),Text("멤버"),DetailPageChat(partyId)],
+        children: <Widget>[DetailPageOutline(partyId),DetailPageBoard(partyId),DetailPageMember(partyId),DetailPageChat(partyId)],
         controller: _tabController,
       ),
     );

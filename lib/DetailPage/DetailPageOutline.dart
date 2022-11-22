@@ -1,6 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
+import '../Model/member.dart';
 
 class DetailPageOutline extends StatefulWidget {
   String partyId = '';
@@ -12,6 +16,8 @@ class DetailPageOutline extends StatefulWidget {
 
 class _DetailPageOutlineState extends State<DetailPageOutline> {
 
+  final _authentication = FirebaseAuth.instance;
+
   String partyId = '';
   String partyName='';
   String partySubtitle = '';
@@ -20,6 +26,8 @@ class _DetailPageOutlineState extends State<DetailPageOutline> {
   String currentMemberCnt = '';
   String maxMemberCnt = '';
   String partyMaker = '';
+  bool isMember = false; // 가입 상태면 true 미가입상태면 false
+  String _name = '';
 
   _DetailPageOutlineState(String partyId)
   {
@@ -31,6 +39,38 @@ class _DetailPageOutlineState extends State<DetailPageOutline> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    getMyInfo();
+    setMemberYN();
+  }
+
+
+  Future<bool> getMyInfo() async{
+    final myid = _authentication.currentUser!.uid;
+    final docs = await FirebaseFirestore.instance.collection("user/${myid}/myInfo").doc(myid).get()
+        .then((DocumentSnapshot doc){
+      _name = doc["userName"];
+    }
+    );
+    return true;
+  }
+
+  Future<bool> setMemberYN() async{
+
+    CollectionReference<Map<String,dynamic>> res = FirebaseFirestore.instance.collection("somoim/${partyId}/memberList/${partyId}/member");
+    QuerySnapshot<Map<String,dynamic>> qrysnp = await res.get(); //
+
+    for (var doc in qrysnp.docs)
+    {
+      Member m = Member.fromQuerySnapShot(doc);
+      if(_authentication.currentUser!.uid == m.memberID)
+      {
+        isMember=true;
+      }
+      print("${m.name},${m.memberID}");
+    }
+    return true;
+
+    return true;
   }
 
   Future<bool> getPartyInfo() async{
@@ -67,7 +107,7 @@ class _DetailPageOutlineState extends State<DetailPageOutline> {
                 children: [Text("모임일정"),Icon(Icons.add)],
               ),
               SizedBox(
-                  height: 300,
+                  height: 200,
                   child: ListView.builder(itemBuilder: (context,position){
                     return Card(
                       child: Row(
@@ -85,6 +125,22 @@ class _DetailPageOutlineState extends State<DetailPageOutline> {
                     itemCount: 5,
                   )
               ),
+              if(!isMember)
+              ElevatedButton(
+                onPressed: () async{
+
+                  final waitingRef = FirebaseFirestore.instance.collection('somoim/${partyId}/memberList/${partyId}/waiting').doc(_authentication.currentUser!.uid);
+                  await waitingRef
+                      .set({
+                    'memberID' : _authentication.currentUser!.uid,
+                    'name' : _name,
+                    'leaderYN' : "N" //소모임장은 Y 필요에 따라 포지션 자체를 넣어도 됨
+                  });
+
+                  final message = '소모임 가입 신청 완료. 소모임장의 확인 후 이용 가능해요';
+                  Fluttertoast.showToast(msg:message,fontSize:10);
+                },
+                child: Text("소모임 가입 신청"))
             ],
           );
         }

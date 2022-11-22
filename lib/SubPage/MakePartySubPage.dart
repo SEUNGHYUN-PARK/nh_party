@@ -24,6 +24,8 @@ class _MakePartySubPageState extends State<MakePartySubPage> {
   String _maxMemberCnt = "";
   String _partySubtitle = "";
   String _selectedValue = "운동";
+  String _name = '';
+
 
   void _tryValidation(){
     final isValid = _formkey.currentState!.validate();
@@ -31,6 +33,24 @@ class _MakePartySubPageState extends State<MakePartySubPage> {
       _formkey.currentState!.save();
     }
   }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getMyInfo();
+  }
+
+  Future<bool> getMyInfo() async{
+    final myid = _authentication.currentUser!.uid;
+    final docs = await FirebaseFirestore.instance.collection("user/${myid}/myInfo").doc(myid).get()
+        .then((DocumentSnapshot doc){
+      _name = doc["userName"];
+    }
+    );
+    return true;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -233,6 +253,13 @@ class _MakePartySubPageState extends State<MakePartySubPage> {
                             tmp = 'trip';
                           }
 
+                          final memberRef = FirebaseFirestore.instance.collection('somoim/${partyRef.id}/memberList/${partyRef.id}/member').doc(_authentication.currentUser!.uid);
+                          await memberRef
+                              .set({
+                            'memberID' : _authentication.currentUser!.uid,
+                            'name' : _name,
+                            'leaderYN' : "Y" //소모임장은 Y 필요에 따라 포지션 자체를 넣어도 됨
+                          });
 
                           final categoryRef = FirebaseFirestore.instance.collection('category').doc('category').collection('${tmp}').doc(partyRef.id);
                           await categoryRef
