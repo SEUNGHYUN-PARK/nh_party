@@ -253,6 +253,19 @@ class _MakePartySubPageState extends State<MakePartySubPage> {
                             tmp = 'trip';
                           }
 
+                          final mySomoimRef = FirebaseFirestore.instance.collection('user/${_authentication.currentUser!.uid}/mySomoim').doc(partyRef.id);
+                          await mySomoimRef.set({
+                            'partyName' : _partyName,
+                            'partySubtitle' : _partySubtitle,
+                            'partyContents' : _partyContents,
+                            'partyCategory' : _selectedValue,
+                            'currentMemberCnt': "1",
+                            'maxMemberCnt' : _maxMemberCnt,
+                            'partyMaker' : _authentication.currentUser!.uid,
+                            'partyId' : partyRef.id,
+                            'timeStamp' : timeStamp,
+                          });
+
                           final memberRef = FirebaseFirestore.instance.collection('somoim/${partyRef.id}/memberList/${partyRef.id}/member').doc(_authentication.currentUser!.uid);
                           await memberRef
                               .set({
