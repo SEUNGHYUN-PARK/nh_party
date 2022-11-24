@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:nh_party/Model/appointment.dart';
@@ -297,6 +298,8 @@ class _DetailPageAppointmentNew extends State<DetailPageAppointmentNew> {
                         child: TextFormField(
                           key: ValueKey(5),
                           decoration: InputDecoration(border: InputBorder.none),
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [FilteringTextInputFormatter.allow(RegExp('[0-9]'))],
                           validator: (String? value) {
                             if (value == null || value.isEmpty) {
                               return "정모 인원을 입력해주세요";
