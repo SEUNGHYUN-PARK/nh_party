@@ -66,7 +66,7 @@ class _EtcSubPageState extends State<EtcSubPage> {
               ElevatedButton(
                 onPressed: () async {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return UserInfoPage(_authentication.currentUser!.uid);
+                    return UserInfoPage();
                   }));
                 },
                 child: Text("정보 수정하기"),
