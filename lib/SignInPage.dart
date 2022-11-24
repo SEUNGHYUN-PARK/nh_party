@@ -5,8 +5,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import './MainPage.dart';
 import './SignUpPage.dart';
 import './InitPWPage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({Key? key}) : super(key: key);
@@ -19,12 +19,14 @@ class _SignInPageState extends State<SignInPage> {
   DateTime timeBackPressed = DateTime.now();
   final _formKey = GlobalKey<FormState>();
   final _authentication = FirebaseAuth.instance;
-  String _userID ="";
-  String _userPW ="";
+  String? _userID ="";
+  String? _userPW ="";
   bool _isAutoSignIn = false;
   bool _isSaveId = false;
   bool showSpinner = false;
-  TextEditingController _textEditingController = TextEditingController();
+  TextEditingController _idController = TextEditingController();
+  TextEditingController _pwController = TextEditingController();
+  static final storage = new FlutterSecureStorage();
 
   void _tryValidation(){
     final isValid = _formKey.currentState!.validate();
@@ -37,53 +39,21 @@ class _SignInPageState extends State<SignInPage> {
   void initState()
   {
     super.initState();
-    _getUserID();
-  }
-
-  void _getUserID() async
-  {
-    var tmp="";
-    var key = 'userID';
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    setState(() {
-      tmp = pref.getString(key)!;
-      _textEditingController.text = tmp;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _asyncMethod();
     });
+  }
 
-    if(tmp != "")
-    {
-      _isSaveId = true;
+  _asyncMethod() async {
+    _userID = await storage.read(key: "_userID");
+    String? setting = await storage.read(key: "setting");
+    print("$_userID  /  $setting");
+    if (setting == 'rememberId') {
+      _idController.text = _userID!;
+      setState(() {
+        _isSaveId=true;
+      });
     }
-    else
-    {
-      _isSaveId = false;
-    }
-  }
-
-  void _setAutoSignIn(String _userID, String _userPW)  async
-  {
-    var autoSignIn_key = 'autoSignIn';
-    var userID_key = 'userID';
-    var userPW_key = 'userPW';
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    pref.setString(autoSignIn_key, 'autoSignIn');
-    pref.setString(userID_key, _userID);
-    pref.setString(userPW_key, _userPW);
-  }
-
-  void _setUserID(String _userID)  async
-  {
-    var userID_key = 'userID';
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    pref.setString(userID_key, _userID);
-  }
-
-  void _removePreference() async
-  {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    pref.remove('userID');
-    pref.remove('userPW');
-    pref.remove('autoSignIn');
   }
 
 
@@ -124,7 +94,7 @@ class _SignInPageState extends State<SignInPage> {
                         width: 300,
                         padding: EdgeInsets.only(left: 20,right: 20),
                         child: TextFormField(
-                          controller: _textEditingController,
+                          controller: _idController,
                           decoration: InputDecoration(
                             labelText: '이메일',
                             labelStyle: TextStyle(fontSize: 10),
@@ -137,12 +107,10 @@ class _SignInPageState extends State<SignInPage> {
                             }
                             return null;
                           },
-                          onSaved: (value) {
-                            setState(() {
-                              _userID = value!;
-                            });
-                          },
                           onChanged: (value){
+                            _userID = value;
+                          },
+                          onSaved: (value){
                             _userID = value;
                           },
                         ),
@@ -151,6 +119,7 @@ class _SignInPageState extends State<SignInPage> {
                         width: 300,
                         padding: EdgeInsets.only(left: 20,right: 20),
                         child: TextFormField(
+                          controller: _pwController,
                           obscureText: true,
                           decoration: InputDecoration(
                             labelText: "Password",
@@ -163,12 +132,10 @@ class _SignInPageState extends State<SignInPage> {
                             }
                             return null;
                           },
-                          onSaved: (value) {
-                            setState(() {
-                              _userPW = value!;
-                            });
-                          },
                           onChanged: (value){
+                            _userPW = value;
+                          },
+                          onSaved: (value){
                             _userPW = value;
                           },
                         ),
@@ -184,22 +151,39 @@ class _SignInPageState extends State<SignInPage> {
                             _tryValidation();
                             try{
                               final newUser = await _authentication.signInWithEmailAndPassword(
-                                  email: _userID, password: _userPW);
+                                  email: _userID!, password: _userPW!);
+                              print("_isSaveId : $_isSaveId");
+                              print("_isAutoSignIn : $_isAutoSignIn");
+
                               if(newUser.user!=null){
-                                if (_isAutoSignIn)
-                                {
-                                  print(_userID);
-                                  print(_userPW);
-                                  _setAutoSignIn(_userID,_userPW);
+
+                                if(_isAutoSignIn) {
+                                  _isSaveId = true;
+                                  // 자동로그인시 ID저장항목의 Disable이 자동으로 설정되지만 실제 값도 null로 설정
+                                  // 따라서 값을 강제적으로 설정해줘야함
                                 }
+
                                 if(_isSaveId)
                                 {
-                                  _setUserID(_userID);
+                                  await storage.write(key: "_userID", value: _userID!);
+                                  await storage.write(key: "setting", value: "rememberId");
+                                  if(_isAutoSignIn) {
+                                    await storage.write(key: "_userPW", value: _pwController.text.toString());
+                                    await storage.write(key: "setting", value: "autoSignIn&rememberId");
+                                  }
                                 }
-                                else if(!_isSaveId)
-                                {
-                                  _removePreference();
+                                else{
+                                  await storage.delete(key: "setting");
+                                  await storage.delete(key: "_userID");
+                                  await storage.delete(key: "_userPW");
                                 }
+                                final tmp = await storage.read(key: "_userID");
+                                final tmp2 = await storage.read(key: "_userPW");
+                                final tmp3 = await storage.read(key: "setting");
+
+                                print("$tmp / $tmp2 / $tmp3");
+                                print(_idController.toString());
+                                print(_pwController.toString());
 
                                 Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()),(route)=>false);
 
@@ -218,18 +202,6 @@ class _SignInPageState extends State<SignInPage> {
                               Fluttertoast.showToast(msg:message,fontSize:10);
                             }
 
-
-
-
-                            //계정정보 체크
-                            //if 성공 자동저장 및 아이디저장 기능 구현 + 메인 화면 이동
-                            //else 실패 toast message로 계정정보 불일치 항목 출력
-
-                            //                        final message = '계정정보를 다시 확인해주세요';
-                            //                         Fluttertoast.showToast(msg:message,fontSize:10);
-                            //
-
-                            //Navigator.of(context).push(MaterialPageRoute(builder: (context) => MainPage()));
                           },
                           child: Text("Login")
                       ),

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './SignInPage.dart';
@@ -13,48 +14,68 @@ class InitPage extends StatefulWidget {
 }
 
 class _InitPageState extends State<InitPage> {
-  //String userID = "";
   final _authentication = FirebaseAuth.instance;
+  static final storage = FlutterSecureStorage();
+  String? _userID = '';
+  String? _userPW = '';
 
   void initState()
   {
     super.initState();
-    _initCheck();
-  }
-
-  void _initCheck() async {
-    var userID_key = 'userID';
-    var userPW_key = 'userPW';
-    var autoSignIn_key = 'autoSignIn';
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    setState(() async {
-      var userID_value = pref.getString(userID_key);
-      var autoSignIn_value = pref.getString(autoSignIn_key);
-      var userPW_value = pref.getString(userPW_key);
-      print(userID_value);
-      print(userPW_value);
-      if(userID_value != null && autoSignIn_value == 'autoSignIn')
-      {
-        // ID저장
-        try{
-          final user = await _authentication.signInWithEmailAndPassword(
-              email: userID_value, password: userPW_value!);
-          if(user.user!=null){
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()),(route)=>false);
-          }
-        }
-        catch(e){
-          print(e);
-          final message = e.toString();
-          Fluttertoast.showToast(msg:message,fontSize:10);
-        }
-      }
-      else
-      {
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => SignInPage()),(route)=>false);
-      }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _asyncMethod();
     });
   }
+
+  _asyncMethod() async{
+    _userID = await storage.read(key: "_userID");
+    _userPW = await storage.read(key: "_userPW");
+
+    print("& : $_userID");
+    print("& : $_userPW");
+
+    if(_userID != null && _userPW != null) {
+      try{
+        final user = await _authentication.signInWithEmailAndPassword(
+            email: _userID!, password: _userPW!);
+        if(user.user!=null){
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()),(route)=>false);
+        }
+      }
+      catch(e){
+        print(e);
+        final message = e.toString();
+        Fluttertoast.showToast(msg:message,fontSize:10);
+      }
+    }
+    else {
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => SignInPage()),(route)=>false);
+    }
+  }
+
+
+  // void _initCheck() async {
+  //   var userID_key = 'userID';
+  //   var userPW_key = 'userPW';
+  //   var autoSignIn_key = 'autoSignIn';
+  //   SharedPreferences pref = await SharedPreferences.getInstance();
+  //   var userID_value = pref.getString(userID_key);
+  //   var autoSignIn_value = pref.getString(autoSignIn_key);
+  //   var userPW_value = pref.getString(userPW_key);
+  //   setState(() async {
+  //     print("=============================${userID_value}=======================================");
+  //     print("=============================${userPW_value}=======================================");
+  //     if(userID_value != null && autoSignIn_value == 'autoSignIn')
+  //     {
+  //       // ID저장
+  //
+  //     }
+  //     else
+  //     {
+  //       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => SignInPage()),(route)=>false);
+  //     }
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
