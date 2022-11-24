@@ -126,7 +126,7 @@ class _DetailPageOutlineState extends State<DetailPageOutline> {
                 ],
               ),
               SizedBox(
-                  height: 300,
+                  height: 200,
                   child: StreamBuilder(
                     stream: FirebaseFirestore.instance
                         .collection('somoim')
