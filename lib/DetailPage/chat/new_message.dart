@@ -47,7 +47,8 @@ class _NewMessageState extends State<NewMessage> {
               maxLines:null,
               controller: _controller,
               decoration: InputDecoration(
-                labelText: 'send a message...'
+                labelText: '메세지를 입력해주세요',
+                labelStyle: TextStyle(fontSize: 10)
               ),
               onChanged: (value){
                 setState(() {

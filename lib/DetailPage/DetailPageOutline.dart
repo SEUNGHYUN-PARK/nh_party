@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../Model/member.dart';
@@ -42,7 +43,6 @@ class _DetailPageOutlineState extends State<DetailPageOutline> {
     // TODO: implement initState
     super.initState();
     getMyInfo();
-    setMemberYN();
   }
 
 
@@ -56,7 +56,7 @@ class _DetailPageOutlineState extends State<DetailPageOutline> {
     return true;
   }
 
-  Future<bool> setMemberYN() async{
+  Future<bool> getPageInfo() async{
 
     CollectionReference<Map<String,dynamic>> res = FirebaseFirestore.instance.collection("somoim/${_partyId}/memberList/${_partyId}/member");
     QuerySnapshot<Map<String,dynamic>> qrysnp = await res.get(); //
@@ -70,12 +70,7 @@ class _DetailPageOutlineState extends State<DetailPageOutline> {
       }
       print("${m.name},${m.memberID}");
     }
-    return true;
 
-    return true;
-  }
-
-  Future<bool> getPartyInfo() async{
     final docs = await FirebaseFirestore.instance.collection("somoim").doc(_partyId).get()
                  .then((DocumentSnapshot doc){
                    _currentMemberCnt = doc["currentMemberCnt"];
@@ -95,124 +90,221 @@ class _DetailPageOutlineState extends State<DetailPageOutline> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: FutureBuilder(
-        future: getPartyInfo(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          return Column(
-            children: [
-              Padding(padding: EdgeInsets.all(30)),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [Text("${_partyName} (${_currentMemberCnt} / ${_maxMemberCnt})")],
-              ),
-              Padding(padding: EdgeInsets.all(20)),
-              Text("${_partySubtitle}",textAlign: TextAlign.left,),
-              Padding(padding: EdgeInsets.all(20)),
-              Row(
-                //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return FutureBuilder(
+      future : getPageInfo(),
+      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        return Scaffold(
+          body: Container(
+              child: Column(
                 children: [
-                  Text("모임일정            "),
-                  GestureDetector(
-                      onTap: (){
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  DetailPageAppointmentNew(_partyId)),
-                        );
-                      },
-                      child: Icon(Icons.add))
+                  Expanded(
+                    child: Stack(
+                      children: [
+                        Positioned(
+                            top:30,
+                            child:Container(
+                              height: 200,
+                              width: MediaQuery.of(context).size.width-40,
+                              margin: EdgeInsets.symmetric(horizontal: 20),
+                              decoration: BoxDecoration(
+                                  color: Color(0xff333366),
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  boxShadow: [
+                                    BoxShadow(
+                                        color: Colors.black.withOpacity(0.3),
+                                        blurRadius: 15,
+                                        spreadRadius: 5
+                                    )
+                                  ]
+                              ),
+                              child: Column(
+                                children: [
+                                  Padding(
+                                      padding: EdgeInsets.only(top : 80),
+                                      child: Text("${_partyName}",style: TextStyle(fontWeight: FontWeight.w600,fontSize: 30,color: Colors.white),textAlign: TextAlign.center,)
+                                  ),
+                                  Padding(
+                                      padding: EdgeInsets.only(top: 10),
+                                      child : Text("${_partySubtitle} (${_currentMemberCnt}/${_maxMemberCnt})",style: TextStyle(fontWeight: FontWeight.w400,fontSize: 20,color: Color(0xffb6b2df)),textAlign: TextAlign.center,)
+                                  ),
+                                ],
+                              ),
+                            )
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top:10),
+                          alignment: FractionalOffset.topCenter,
+                          child: _partyCategory == "운동" ? Image(image: AssetImage("assets/image/category/exercise.png"),height: 92,width: 92,) :
+                          _partyCategory == "먹방" ? Image(image: AssetImage("assets/image/category/mukbang.png"),height: 92,width: 92) :
+                          _partyCategory == "여행" ? Image(image: AssetImage("assets/image/category/trip.png"),height: 92,width: 92) :
+                          _partyCategory == "게임" ? Image(image: AssetImage("assets/image/category/game.png"),height: 92,width: 92) : null,
+                        ),
+                        if(!_isMember)
+                          Positioned(
+                            top:310,
+                            width: MediaQuery.of(context).size.width,
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text("소모임의 멤버가 아니시네요!"),
+                                  Text("하단의 소모임 가입 신청 버튼을 눌러주세요"),
+                                  Text("소모임장의 승인 후 이용 가능하십니다"),
+                                  Container(
+                                    child: ElevatedButton(
+                                        onPressed: () async{
+                                          final waitingRef = FirebaseFirestore.instance.collection('somoim/${_partyId}/memberList/${_partyId}/waiting').doc(_authentication.currentUser!.uid);
+                                          await waitingRef
+                                              .set({
+                                            'memberID' : _authentication.currentUser!.uid,
+                                            'name' : _name,
+                                            'leaderYN' : "N" //소모임장은 Y 필요에 따라 포지션 자체를 넣어도 됨
+                                          });
+
+                                          final waitSomoimRef = FirebaseFirestore.instance.collection('user/${_authentication.currentUser!.uid}/waitSomoim').doc(_partyId);
+                                          await waitSomoimRef.set({
+                                            'partyName' : _partyName,
+                                            'partySubtitle' : _partySubtitle,
+                                            'partyContents' : _partyContents,
+                                            'partyCategory' : _partyCategory,
+                                            'currentMemberCnt': _currentMemberCnt,
+                                            'maxMemberCnt' : _maxMemberCnt,
+                                            'partyMaker' : _authentication.currentUser!.uid,
+                                            'partyId' : _partyId,
+                                            'timeStamp' : _timeStamp,
+                                          });
+
+                                          final message = '소모임 가입 신청 완료. 소모임장의 확인 후 이용 가능해요';
+                                          Fluttertoast.showToast(msg:message,fontSize:10);
+                                        },
+                                        child: Text("소모임 가입 신청")),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        if(_isMember)
+                        Positioned(
+                          top:250,
+                          child: Row(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(left:20),
+                                  child: Text("모임일정",style: TextStyle(fontSize:20,fontWeight: FontWeight.w400),)),
+                              ],
+                          ),
+                        ),
+                        if(_isMember)
+                        Positioned(
+                          top: 280,
+                          left: 15,
+                          width: MediaQuery.of(context).size.width-40,
+                          child: Container(
+                            alignment: FractionalOffset.center,
+                            child: SizedBox(
+                                height: 200,
+                                child: StreamBuilder(
+                                  stream: FirebaseFirestore.instance
+                                      .collection('somoim')
+                                      .doc(_partyId)
+                                      .collection('appointment')
+                                      .snapshots(),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
+                                      snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    }
+                                    final docs = snapshot.data!.docs;
+                                    return AnimationLimiter(
+                                      child: ListView.builder(
+                                        itemCount: docs.length,
+                                        itemBuilder: (context, index) {
+                                          return AnimationConfiguration.staggeredList(
+                                            position: index,
+                                            duration: const Duration(milliseconds: 375),
+                                            child: SlideAnimation(
+                                              verticalOffset: 50.0,
+                                              child: FadeInAnimation(
+                                                child: Center(
+                                                  child: Card(
+                                                    child : Container(
+                                                      height: 50,
+                                                      margin: EdgeInsets.symmetric(vertical: 5,horizontal:5),
+                                                      child: Row(
+                                                        children: [
+                                                          Container(
+                                                            child: Padding(
+                                                              padding: EdgeInsets.all(4.0),
+                                                              child: Column(
+                                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                children:[Icon(Icons.calendar_month,size: 30,),]
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Container(
+                                                            width : 160,
+                                                            child: Column(
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                              mainAxisAlignment: MainAxisAlignment.center,
+                                                              children: [
+                                                                Text(
+                                                                  docs[index]['name'] + "(" + docs[index]['person'] + "명)",
+                                                                  style: TextStyle(fontSize: 15.0),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          Container(
+                                                            child: Column(
+                                                              mainAxisAlignment: MainAxisAlignment.center,
+                                                              crossAxisAlignment: CrossAxisAlignment.end,
+                                                              children: [
+                                                                Text(
+                                                                  docs[index]['date'] + " " + docs[index]['time'],
+                                                                  style: TextStyle(fontSize: 10.0),
+                                                                ),
+                                                                Text(
+                                                                  docs[index]['place'],
+                                                                  style: TextStyle(fontSize: 10.0),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    )
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  },
+                                )),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
-              ),
-              SizedBox(
-                  height: 200,
-                  child: StreamBuilder(
-                    stream: FirebaseFirestore.instance
-                        .collection('somoim')
-                        .doc(_partyId)
-                        .collection('appointment')
-                        .snapshots(),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
-                        snapshot) {
-                      if (snapshot.connectionState ==
-                          ConnectionState.waiting) {
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                      final docs = snapshot.data!.docs;
-                      return ListView.builder(
-                        itemCount: docs.length,
-                        itemBuilder: (context, index) {
-                          return Card(
-                            child: Column(children: <Widget>[
-                              Row(children: <Widget>[
-                                Text(
-                                  docs[index]['name'],
-                                  style: TextStyle(fontSize: 20.0),
-                                ),
-                                Text(
-                                  "(" + docs[index]['person'] + "명)",
-                                  style: TextStyle(fontSize: 15.0),
-                                ),
-                              ]),
-                              Row(children: <Widget>[
-                                Text(
-                                  docs[index]['date'],
-                                  style: TextStyle(fontSize: 10.0),
-                                ),
-                                Text(
-                                  " " + docs[index]['time'],
-                                  style: TextStyle(fontSize: 10.0),
-                                ),
-                              ]),
-                              Row(children: <Widget>[
-                                Text(
-                                  docs[index]['place'],
-                                  style: TextStyle(fontSize: 10.0),
-                                ),
-                              ]),
-                            ]),
-                          );
-                        },
-                      );
-                    },
-                  )),
-              if(!_isMember)
-              ElevatedButton(
-                onPressed: () async{
-
-                  final waitingRef = FirebaseFirestore.instance.collection('somoim/${_partyId}/memberList/${_partyId}/waiting').doc(_authentication.currentUser!.uid);
-                  await waitingRef
-                      .set({
-                    'memberID' : _authentication.currentUser!.uid,
-                    'name' : _name,
-                    'leaderYN' : "N" //소모임장은 Y 필요에 따라 포지션 자체를 넣어도 됨
-                  });
-
-                  final waitSomoimRef = FirebaseFirestore.instance.collection('user/${_authentication.currentUser!.uid}/waitSomoim').doc(_partyId);
-                  await waitSomoimRef.set({
-                    'partyName' : _partyName,
-                    'partySubtitle' : _partySubtitle,
-                    'partyContents' : _partyContents,
-                    'partyCategory' : _partyCategory,
-                    'currentMemberCnt': _currentMemberCnt,
-                    'maxMemberCnt' : _maxMemberCnt,
-                    'partyMaker' : _authentication.currentUser!.uid,
-                    'partyId' : _partyId,
-                    'timeStamp' : _timeStamp,
-                  });
-
-                  final message = '소모임 가입 신청 완료. 소모임장의 확인 후 이용 가능해요';
-                  Fluttertoast.showToast(msg:message,fontSize:10);
-                },
-                child: Text("소모임 가입 신청"))
-            ],
-          );
-        }
-      ),
+              )
+          ),
+          floatingActionButton: _isMember ? FloatingActionButton(
+            onPressed: () {
+              Navigator.push(context,MaterialPageRoute(builder: (context) =>DetailPageAppointmentNew(_partyId)));
+            },
+            child: Icon(Icons.add),
+          ) : null,
+        );
+      }
     );
   }
 }

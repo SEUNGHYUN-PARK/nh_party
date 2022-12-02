@@ -1,6 +1,8 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 import '../DetailPage/DetailPageMain.dart';
 import '../Model/Somoim.dart';
@@ -88,81 +90,30 @@ class _MyPartyListSubPageState extends State<MyPartyListSubPage> {
   }
   @override
   Widget build(BuildContext context) {
+    final baseTextStyle = const TextStyle(
+        fontFamily: 'NanumBarunGothic'
+    );
+    final regularTextStyle = baseTextStyle.copyWith(
+        color: const Color(0xffb6b2df),
+        fontSize: 9.0,
+        fontWeight: FontWeight.w400
+    );
+    final subHeaderTextStyle = regularTextStyle.copyWith(
+        fontSize: 12.0
+    );
+    final headerTextStyle = baseTextStyle.copyWith(
+        color: Colors.white,
+        fontSize: 18.0,
+        fontWeight: FontWeight.w600
+    );
     return Container(
         child: Column(
           children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Padding(
-                  padding: EdgeInsets.only(left:20),
-                  child: Text("가입한 모임",textAlign: TextAlign.start,),
-                ),
-              ],
-            ),
-            Center(
-              child: SizedBox(
-                height: 250,
-                child: FutureBuilder(
-                  future: getMySomoim(),
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if(snapshot.hasData == false){
-                      return CircularProgressIndicator();
-                    }
-                    else if (snapshot.hasError){
-                      return Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text(
-                            'Error : ${snapshot.error}',
-                            style: TextStyle(fontSize: 15),
-                          )
-                      );
-                    }
-                    else{
-                      if(mdl.length == 0){
-                        return Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [Text('나의 소모임을 추가하세요!')]
-                        );
-                      }
-                      else{
-                        return ListView.builder(
-                          itemCount:mdl.length,
-                          itemBuilder: (context,position) {
-                            return Column(
-                              children: [
-                                ListTile(
-                                  title:Text("${mdl[position].partyName} (${mdl[position].currentMemberCnt}/${mdl[position].maxMemberCnt})"),
-                                  subtitle: Text("${mdl[position].partySubtitle}"),
-                                  leading: Icon(Icons.account_box_sharp),
-                                  onTap: (){
-                                    print("${mdl[position].partyName}");
-                                    Navigator.push(context,MaterialPageRoute(builder: (context){
-                                      return DetailPageMain("${mdl[position].partyId}");
-                                    })
-                                    );
-                                  },
-                                ),
-                                Container(
-                                  height: 1,
-                                  color: Colors.black,
-                                )
-                              ],
-                            );
-                          },
-                        );
-                      }
-                    }
-                  },
-                ),
-              ),
-            ),
-            Row(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left:20),
-                  child: Text("${_userName}님의 관심사별 모임찾기"),
-                ),
+                Text("${_userName}님의 관심사를 바탕으로 정리해봤어요",style: TextStyle(fontWeight: FontWeight.w600),),
               ],
             ),
             Row(
@@ -231,12 +182,18 @@ class _MyPartyListSubPageState extends State<MyPartyListSubPage> {
             ),
             Center(
               child: SizedBox(
-                height: 150,
+                height: 430,
                 child: FutureBuilder(
                   future: getMyCategory(_chooseFav),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if(snapshot.hasData == false){
-                      return CircularProgressIndicator();
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          CircularProgressIndicator()
+                        ],
+                      );
                     }
                     else if (snapshot.hasError){
                       return Padding(
@@ -256,31 +213,137 @@ class _MyPartyListSubPageState extends State<MyPartyListSubPage> {
                         );
                       }
                       else{
-                        return ListView.builder(
-                          itemCount:category_mdl.length,
-                          itemBuilder: (context,position) {
-                            return Column(
-                              children: [
-                                ListTile(
-                                  title:Text("${category_mdl[position].partyName} (${category_mdl[position].currentMemberCnt}/${category_mdl[position].maxMemberCnt})"),
-                                  subtitle: Text("${category_mdl[position].partySubtitle}"),
-                                  leading: Icon(Icons.account_box_sharp),
-                                  onTap: (){
-                                    print("${category_mdl[position].partyName}");
-                                    Navigator.push(context,MaterialPageRoute(builder: (context){
-                                      return DetailPageMain("${category_mdl[position].partyId}");
-                                    })
-                                    );
-                                  },
-                                ),
-                                Container(
-                                  height: 1,
-                                  color: Colors.black,
-                                )
-                              ],
-                            );
-                          },
-                        );
+                        // return CarouselSlider.builder(
+                        //   itemCount:category_mdl.length,
+                        //   itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) =>
+                        //       ListTile(
+                        //         title:Text("${category_mdl[itemIndex].partyName} (${category_mdl[itemIndex].currentMemberCnt}/${category_mdl[itemIndex].maxMemberCnt})"),
+                        //         subtitle: Text("${category_mdl[itemIndex].partySubtitle}"),
+                        //         leading: Icon(Icons.account_box_sharp),
+                        //         onTap: (){
+                        //           print("${category_mdl[itemIndex].partyName}");
+                        //           Navigator.push(context,MaterialPageRoute(builder: (context){
+                        //             return DetailPageMain("${category_mdl[itemIndex].partyId}");
+                        //           })
+                        //           );
+                        //         },
+                        //       ),
+                        //   options: CarouselOptions(
+                        //     height: 400,
+                        //     aspectRatio: 16/9,
+                        //     viewportFraction: 0.8,
+                        //     initialPage: 0,
+                        //     enableInfiniteScroll: true,
+                        //     reverse: false,
+                        //     autoPlay: true,
+                        //     autoPlayInterval: Duration(seconds: 3),
+                        //     autoPlayAnimationDuration: Duration(milliseconds: 800),
+                        //     autoPlayCurve: Curves.fastOutSlowIn,
+                        //     enlargeCenterPage: true,
+                        //     scrollDirection: Axis.horizontal,
+                        //   ),
+                        // );
+                        return AnimationLimiter(
+                            child: ListView.builder(
+                              itemCount:category_mdl.length,
+                              itemBuilder: (context,position) {
+                                return AnimationConfiguration.staggeredList(
+                                  position: position,
+                                  duration: const Duration(milliseconds: 375),
+                                  child: SlideAnimation(
+                                    verticalOffset: 50.0,
+                                    child: FadeInAnimation(
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                              margin: EdgeInsets.symmetric(
+                                                vertical : 16.0,
+                                                horizontal: 24.0,
+                                              ),
+                                              child : GestureDetector(
+                                                onTap: (){
+                                                  print("${category_mdl[position].partyName}");
+                                                  Navigator.push(context,MaterialPageRoute(builder: (context){
+                                                    return DetailPageMain("${category_mdl[position].partyId}");
+                                                  }));
+                                                },
+                                                child: Stack(
+                                                  children: [
+                                                    Container(
+                                                      height: 124,
+                                                      margin: EdgeInsets.only(left: 46),
+                                                      decoration: BoxDecoration(
+                                                          color: Color(0xff333366),
+                                                          shape:BoxShape.rectangle,
+                                                          borderRadius: BorderRadius.circular(8.0),
+                                                          boxShadow : <BoxShadow>[BoxShadow(
+                                                              color: Colors.black12,
+                                                              blurRadius: 10.0,
+                                                              offset: Offset(0.0,10.0)
+                                                          )]
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      margin: EdgeInsets.symmetric(vertical: 16),
+                                                      alignment: FractionalOffset.centerLeft,
+                                                      child: category_mdl[position].partyCategory == "운동" ? Image(image: AssetImage("assets/image/category/exercise.png"),height: 92,width: 92,) :
+                                                      category_mdl[position].partyCategory == "먹방" ? Image(image: AssetImage("assets/image/category/mukbang.png"),height: 92,width: 92) :
+                                                      category_mdl[position].partyCategory == "여행" ? Image(image: AssetImage("assets/image/category/trip.png"),height: 92,width: 92) :
+                                                      Image(image: AssetImage("assets/image/category/game.png"),height: 92,width: 92)
+                                                      ,
+                                                    ),
+                                                    SizedBox(
+                                                      height: 130,
+                                                      width: 400,
+                                                      child: Container(
+                                                        margin: EdgeInsets.fromLTRB(100, 16, 16, 16),
+                                                        constraints: BoxConstraints.expand(),
+                                                        child: SizedBox(
+                                                          child: Column(
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            children: [
+                                                              Container(
+                                                                height: 4.0,
+                                                              ),
+                                                              Text(category_mdl[position].partyName!,
+                                                                  style : headerTextStyle
+                                                              ),
+                                                              Container(
+                                                                  height: 10.0
+                                                              ),
+                                                              Text(category_mdl[position].partySubtitle!,
+                                                                  style : subHeaderTextStyle
+                                                              ),
+                                                              Container(
+                                                                  margin: EdgeInsets.symmetric(vertical: 8.0),
+                                                                  height:2.0,
+                                                                  width: 18.0,
+                                                                  color :  Color(0xff00c6ff)
+                                                              ),
+                                                              Row(
+                                                                children: [
+                                                                  Image.asset("assets/image/group.png",height:25.0),
+                                                                  Container(width: 8.0),
+                                                                  Text("${category_mdl[position].currentMemberCnt!} / ${category_mdl[position].maxMemberCnt!}",style: regularTextStyle,)
+                                                                ],
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              )
+                                          )
+
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ));
                       }
                     }
                   },

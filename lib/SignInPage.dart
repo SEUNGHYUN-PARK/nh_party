@@ -87,7 +87,7 @@ class _SignInPageState extends State<SignInPage> {
                     children: <Widget>[
                       Container(
                         padding: EdgeInsets.only(top: 50),
-                        child: Image.asset('image/logo.png',height: 150,width: 250,),
+                        child: Image.asset('assets/image/logo.png',height: 150,width: 250,),
                       ),
                       SizedBox(height: 20,),
                       Container(

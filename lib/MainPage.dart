@@ -5,7 +5,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nh_party/SubPage/AllPartyListSubPage.dart';
 import 'package:nh_party/SubPage/EtcSubPage.dart';
 import 'package:nh_party/SubPage/MyPartyListSubPage.dart';
-import 'DetailPage/DetailPageMain.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class MainPage extends StatefulWidget {
@@ -45,8 +44,6 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
 
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -66,36 +63,27 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text("소모임",style: TextStyle(color: Colors.black),),
+          title: Text("Somoim",style: TextStyle(color: Colors.black),),
           backgroundColor: Colors.transparent,
           elevation: 0.0,
           automaticallyImplyLeading: false,
           centerTitle: true,
-          actions: [
-            IconButton(
-                icon: Icon(Icons.search),
-                color: Colors.black,
-                onPressed: (){
-                  print("search button is clicked");
-                  //Navigator.of(context).push(MaterialPageRoute(builder: (context) =>DetailPageMain()));
-                })
-          ],
         ),
         body: TabBarView(
           children: _widgetList,
           controller: _tabController,
         ),
-        bottomNavigationBar: TabBar(
-          tabs: <Widget>[
-            Tab(icon: Icon(Icons.groups),child: Text("소모임",style: TextStyle(fontSize: 10))),
-            Tab(icon: Icon(Icons.view_list),child: Text("나의 소모임",style: TextStyle(fontSize: 10))),
-            Tab(icon: Icon(Icons.more_horiz),child: Text("마이 페이지",style: TextStyle(fontSize: 10)))
-          ],
-          indicatorColor: Colors.transparent,
-          unselectedLabelColor: Colors.grey,
-          labelColor: Colors.black,
-          controller: _tabController
-        ),
+         bottomNavigationBar: TabBar(
+           tabs: <Widget>[
+             Tab(icon: Icon(Icons.groups)),
+             Tab(icon: Icon(Icons.category)),
+             Tab(icon: Icon(Icons.account_circle))
+           ],
+           indicatorColor: Colors.transparent,
+           unselectedLabelColor: Colors.grey,
+           labelColor: Colors.black,
+           controller: _tabController
+         ),
       )
     );
   }

@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './SignInPage.dart';
 import './MainPage.dart';
@@ -39,7 +40,8 @@ class _InitPageState extends State<InitPage> {
         final user = await _authentication.signInWithEmailAndPassword(
             email: _userID!, password: _userPW!);
         if(user.user!=null){
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()),(route)=>false);
+         // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()),(route)=>false);
+         Navigator.pushAndRemoveUntil(context, PageTransition(curve: Curves.easeInOut,type: PageTransitionType.fade, child: MainPage()),(route)=>false);
         }
       }
       catch(e){
@@ -84,7 +86,9 @@ class _InitPageState extends State<InitPage> {
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[Image.asset('image/logo.png')],
+            children: <Widget>[
+              Image.asset('assets/image/logo.png',width: 150,height: 150,),
+            Text("Somoim",style: TextStyle(fontSize: 20,color: Colors.black),)],
           ),
         ),
       )

@@ -15,6 +15,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title:'nh_party',
+      theme: ThemeData(
+        fontFamily: 'NanumBarunGothic'
+      ),
       home: InitPage(),
     );
   }

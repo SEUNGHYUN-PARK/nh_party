@@ -38,10 +38,6 @@ class _DetailPageBoardState extends State<DetailPageBoard> {
     return true;
   }
 
-
-
-
-
   @override
   Widget build(BuildContext context) {
     setState(() {});
@@ -69,24 +65,71 @@ class _DetailPageBoardState extends State<DetailPageBoard> {
               return ListView.builder(
                 itemCount:mdl.length,
                 itemBuilder: (context,position) {
-                  return Column(
-                    children: [
-                      ListTile(
-                        title:Text("${mdl[position].title}"),
-                        leading: Icon(Icons.account_box_sharp),
-                        onTap: (){
-                          Navigator.push(context,MaterialPageRoute(builder: (context){
-                            return DetailPageBoardSub("${mdl[position].partyId}","${mdl[position].postId}");
-                          })
-                          );
-                        },
+                  return GestureDetector(
+                    onTap: (){
+                      Navigator.push(context,MaterialPageRoute(builder: (context){
+                      return DetailPageBoardSub("${mdl[position].partyId}","${mdl[position].postId}");
+                    }));
+                    },
+                    child: Container(
+                      height: 100,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8.0),
+                          shape:BoxShape.rectangle,
+                        ),
+                      child: Card(
+                        child: Row(
+                          children: [
+                            Container(
+                              child: Padding(
+                                padding: EdgeInsets.all(4.0),
+                                child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children:[
+                                      Icon(Icons.eco,size: 30,),]
+                                ),
+                              ),
+                            ),
+                            Container(
+                              width : 200,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    mdl[position].title!,
+                                    style: TextStyle(fontSize: 20.0),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    mdl[position].contents!,
+                                    style: TextStyle(fontSize: 15.0,color: Colors.grey),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Container(
+                              width : 100,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    mdl[position].timeStamp!.toString().substring(0,8),
+                                    style: TextStyle(fontSize: 12.0),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      Container(
-                        height: 1,
-                        color: Colors.black,
-                      )
-                    ],
+                    ),
                   );
+
                 },
               );
             }

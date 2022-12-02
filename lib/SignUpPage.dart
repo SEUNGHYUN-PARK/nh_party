@@ -5,6 +5,7 @@ import 'MainPage.dart';
 import 'config/palette.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:email_validator/email_validator.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
@@ -93,7 +94,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             _userEmail = value;
                           },
                           validator: (value){
-                            if(value!.isEmpty || !value.contains('@')) {
+                            if(value!.isEmpty || !EmailValidator.validate(value)) {
                               return '이메일을 확인해주세요';
                             }
                             return null;
