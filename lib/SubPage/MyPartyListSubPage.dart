@@ -181,8 +181,8 @@ class _MyPartyListSubPageState extends State<MyPartyListSubPage> {
               ],
             ),
             Center(
-              child: SizedBox(
-                height: 430,
+              child: Container(
+                height: MediaQuery.of(context).size.height*0.83,
                 child: FutureBuilder(
                   future: getMyCategory(_chooseFav),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {

@@ -59,7 +59,15 @@ class _DetailPageBoardState extends State<DetailPageBoard> {
           }
           else{
             if(mdl.length == 0){
-              return Text('게시글을 추가하세요');
+              return SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [Text('게시글을 추가하세요')]
+                ),
+              );
+
             }
             else{
               return ListView.builder(
@@ -81,6 +89,7 @@ class _DetailPageBoardState extends State<DetailPageBoard> {
                         child: Row(
                           children: [
                             Container(
+                              width: MediaQuery.of(context).size.width/11,
                               child: Padding(
                                 padding: EdgeInsets.all(4.0),
                                 child: Column(
@@ -92,14 +101,14 @@ class _DetailPageBoardState extends State<DetailPageBoard> {
                               ),
                             ),
                             Container(
-                              width : 200,
+                              width: MediaQuery.of(context).size.width/3,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
                                     mdl[position].title!,
-                                    style: TextStyle(fontSize: 20.0),
+                                    style: TextStyle(fontSize: 15.0),
                                   ),
                                   SizedBox(
                                     height: 10,
@@ -114,7 +123,7 @@ class _DetailPageBoardState extends State<DetailPageBoard> {
                               ),
                             ),
                             Container(
-                              width : 100,
+                              width: MediaQuery.of(context).size.width/2,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 mainAxisAlignment: MainAxisAlignment.center,

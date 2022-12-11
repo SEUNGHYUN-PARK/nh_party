@@ -237,7 +237,7 @@ class _DetailPageMemberState extends State<DetailPageMember> {
                                         children: [
                                           Text("${waiting[position].name}"),
                                           SizedBox(
-                                            width: 140
+                                            width: MediaQuery.of(context).size.width*0.7
                                           ),
                                           TextButton(
                                               onPressed: () async{
@@ -337,9 +337,6 @@ class _DetailPageMemberState extends State<DetailPageMember> {
                 //   mainAxisAlignment: MainAxisAlignment.center,
                 //   children: [Text("신규회원 신청목록")], //,Icon(Icons.add)
                 // ),
-
-
-
               ],
             );
           }

@@ -238,6 +238,7 @@ class _DetailPageOutlineState extends State<DetailPageOutline> {
                                                       child: Row(
                                                         children: [
                                                           Container(
+                                                            width: MediaQuery.of(context).size.width/11,
                                                             child: Padding(
                                                               padding: EdgeInsets.all(4.0),
                                                               child: Column(
@@ -248,7 +249,7 @@ class _DetailPageOutlineState extends State<DetailPageOutline> {
                                                             ),
                                                           ),
                                                           Container(
-                                                            width : 160,
+                                                            width : (MediaQuery.of(context).size.width)/3,
                                                             child: Column(
                                                               crossAxisAlignment: CrossAxisAlignment.start,
                                                               mainAxisAlignment: MainAxisAlignment.center,
@@ -261,6 +262,7 @@ class _DetailPageOutlineState extends State<DetailPageOutline> {
                                                             ),
                                                           ),
                                                           Container(
+                                                            width: (MediaQuery.of(context).size.width)/2.5,
                                                             child: Column(
                                                               mainAxisAlignment: MainAxisAlignment.center,
                                                               crossAxisAlignment: CrossAxisAlignment.end,

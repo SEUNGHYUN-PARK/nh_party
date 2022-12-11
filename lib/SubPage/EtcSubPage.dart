@@ -119,7 +119,7 @@ class _EtcSubPageState extends State<EtcSubPage> {
 
           Center(
             child: SizedBox(
-              height: 430,
+              height: MediaQuery.of(context).size.height*0.83,
               child: FutureBuilder(
                 future: getMySomoim(),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
